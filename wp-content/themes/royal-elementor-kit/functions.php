@@ -175,3 +175,73 @@ function limit_woocommerce_product_title( $title, $id ) {
 
     return $title;
 }
+
+add_action('wp_footer', function () {
+
+//     if (!is_cart()) return; // Only cart page
+
+?>
+<script>
+(function () {
+
+    if (!document.getElementById("wc-cart-lightbox")) {
+
+        const lightbox = document.createElement("div");
+        lightbox.id = "wc-cart-lightbox";
+        lightbox.innerHTML = `
+            <span class="wc-cart-lightbox-close">&times;</span>
+            <img class="wc-cart-lightbox-img" src="">
+        `;
+        document.body.appendChild(lightbox);
+
+        const style = document.createElement("style");
+        style.innerHTML = `
+            #wc-cart-lightbox{
+                position:fixed;
+                inset:0;
+                background:rgba(0,0,0,.9);
+                display:none;
+                align-items:center;
+                justify-content:center;
+                z-index:999999;
+            }
+            #wc-cart-lightbox img{
+                max-width:95%;
+                max-height:95%;
+                border-radius:8px;
+            }
+            .wc-cart-lightbox-close{
+                position:absolute;
+                top:25px;
+                right:35px;
+                font-size:40px;
+                color:#fff;
+                cursor:pointer;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const lightbox = document.getElementById("wc-cart-lightbox");
+    const lightboxImg = lightbox.querySelector("img");
+
+    document.addEventListener("click", function (e) {
+
+        const img = e.target.closest(".variation-PersonalizedPreview img");
+        if (!img) return;
+
+        e.preventDefault();
+        lightboxImg.src = img.src;
+        lightbox.style.display = "flex";
+    });
+
+    lightbox.addEventListener("click", function (e) {
+        if (e.target === lightbox) {
+            lightbox.style.display = "none";
+        }
+    });
+
+})();
+</script>
+<?php
+});
