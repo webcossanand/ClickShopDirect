@@ -11,6 +11,10 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+define('WP_DEBUG_DISPLAY', true);
+
 class WC_Product_Personalizer
 {
 
@@ -58,10 +62,164 @@ class WC_Product_Personalizer
 
             return $passed;
         });
+
+        add_action('woocommerce_before_single_product_summary', array($this, 'show_product_slug_above_image'), 5);
+        add_action('woocommerce_before_single_product_summary', array($this, 'show_product_category_above_product'), 6);
+
+        add_action('woocommerce_before_single_product_summary', function () {
+            echo '<h1 class="hook-working">HOOK WORKING</h1>';
+        }, 1);
+
+        add_filter('woocommerce_before_single_product_summary', array($this, 'njengah_text_after_price'));
+
+        add_filter('the_content', function ($content) {
+
+            if (is_product() && in_the_loop() && is_main_query()) {
+
+                global $product;
+
+                $custom = '<div style="background:black;color:white;padding:15px;margin-bottom:20px;">';
+                $custom .= 'Slug: ' . $product->get_slug();
+                $custom .= '</div>';
+
+                return $custom . $content;
+            }
+
+            return $content;
+        });
+
+        // add_filter('woocommerce_get_breadcrumb', array($this, 'webcoss_custom_breadcrumb'), 10, 2);
+
         /* commnets added by narendra end */
     }
 
+    public function webcoss_custom_breadcrumb($crumbs, $breadcrumb)
+    {
+
+        if (!is_product()) return;
+
+        global $product;
+        $terms = wc_get_product_terms($product->get_id(), 'product_cat');
+
+        // print_r($product);
+        // print_r($terms);
+        // die(' hii3 ');
+
+        if (! empty($terms)) {
+
+            // Get first category
+            $term = $terms[0];
+
+            // Reset breadcrumb
+            $crumbs = array();
+
+            // Home
+            $crumbs[] = array('Home', home_url());
+
+            // If parent category exists
+            if ($term->parent != 0) {
+                $parent = get_term($term->parent, 'product_cat');
+                $crumbs[] = array($parent->name, get_term_link($parent));
+            }
+
+            // Current category
+            $crumbs[] = array($term->name, get_term_link($term));
+        }
+
+        return $crumbs;
+    }
+
     /* commnets added by narendra start */
+
+    function njengah_text_after_price($price)
+    {
+        $text_to_add_after_price  = '<h1>crazy statement</h1>';;
+
+        return $price . '<br>' .  $text_to_add_after_price;
+    }
+
+    public function show_product_category_above_product()
+    {
+        global $product;
+
+        $terms = get_the_terms($product->get_id(), 'product_cat');
+
+        if (!empty($terms) && !is_wp_error($terms)) {
+            echo '<div class="custom-product-category">';
+
+            foreach ($terms as $term) {
+                $category_link = get_term_link($term);
+                echo '<a href="' . esc_url($category_link) . '">' . esc_html($term->name) . '</a> ';
+            }
+
+            echo '</div>';
+        }
+    }
+
+    public function show_product_slug_above_image()
+    {
+        global $post;
+
+        $slug = str_replace('-', ' ', $post->post_name);
+        $slug = ucwords($slug);
+
+        echo '<div class="custom-product-slug">';
+        echo esc_html($slug);
+        echo '</div>';
+    }
+
+    public function custom_products_list_below()
+    {
+        global $product;
+
+        // Get current product categories
+        $terms = wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'ids'));
+
+        if (!empty($terms)) {
+            $args = array(
+                'post_type'      => 'product',
+                'posts_per_page' => 6,
+                'post__not_in'   => array($product->get_id()), // Exclude current product
+                'tax_query'      => array(
+                    array(
+                        'taxonomy' => 'product_cat',
+                        'field'    => 'term_id',
+                        'terms'    => $terms,
+                    ),
+                ),
+            );
+
+            $loop = new WP_Query($args);
+
+            if ($loop->have_posts()) {
+                echo '<div class="custom-product-list"><h2>You may also like</h2><ul class="products">';
+                while ($loop->have_posts()) : $loop->the_post();
+                    wc_get_template_part('content', 'product'); // WooCommerce template for single product
+                endwhile;
+                echo '</ul></div>';
+            }
+            wp_reset_postdata();
+        }
+    }
+
+    public function product_summary()
+    {
+        echo '<h2>Test!</h2>';
+    }
+
+    public function custom_products_below_details()
+    {
+        echo '<div class="custom-product-list-below">';
+        $args = array(
+            'posts_per_page' => 4, // Number of products to display
+            'columns'        => 4, // How many columns in the grid
+            'orderby'        => 'rand', // Random order, can use 'date' or 'popularity'
+        );
+        woocommerce_related_products($args);
+        echo '</div>';
+    }
+
+
     // popup cumize display
     public function render_customize_modal()
     {
@@ -152,11 +310,14 @@ class WC_Product_Personalizer
 
         $enabled = get_post_meta($post->ID, '_wc_personalize_enabled', true);
 
-        echo '<button type="button" id="wc-customize-btn" 
+
+        if ($enabled === 'yes') {
+            echo '<button type="button" id="wc-customize-btn" 
                 class="button alt"
                 style="margin-top:10px;width:100%;">
                 Customize Now
             </button>';
+        }
     }
     /* commnets added by narendra end */
 

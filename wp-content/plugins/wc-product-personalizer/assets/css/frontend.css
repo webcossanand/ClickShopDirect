@@ -341,7 +341,7 @@ input[type="file"] {
         overflow-y: auto;
     }
 
-    .wc-preview-area{
+    .wc-preview-area {
         height: 100%;
     }
 }
@@ -591,8 +591,8 @@ body.modal-open {
     border-radius: 25px;
     cursor: pointer;
     transition: .3s;
-    white-space:nowrap;
-    text-overflow:ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     word-break: break-all;
 }
 
@@ -621,94 +621,97 @@ body.modal-open {
     width: 50%;
 }
 
-.wc-add-list{
-	display:none;
+.wc-add-list {
+    display: none;
 }
 
 
 /* ===== TABLET ===== */
 
-@media (max-width:1024px){
+@media (max-width:1024px) {
 
-    .wc-modal-box{
-        width:98%;
-        height:95vh;
+    .wc-modal-box {
+        width: 98%;
+        height: 95vh;
     }
 
-    .wc-options-area{
-        width:320px;
+    .wc-options-area {
+        width: 320px;
     }
 
 }
-    
+
 
 /* ===== MOBILE ===== */
 
-@media (max-width:768px){
+@media (max-width:768px) {
 
-    .wc-modal-box{
-        height:100vh;
-        width:100%;
-        border-radius:0;
+    .wc-modal-box {
+        height: 100vh;
+        width: 100%;
+        border-radius: 0;
     }
 
     /* stack layout */
-    .wc-modal-content{
-        flex-direction:column;
+    .wc-modal-content {
+        flex-direction: column;
     }
 
-    .wc-preview-area{
-        height:45%;
-        padding:10px;
+    .wc-preview-area {
+        height: 45%;
+        padding: 10px;
     }
 
-    .wc-options-area{
-        width:100%;
-        max-width:100%;
-        height:55%;
-        border-left:none;
-        border-top:1px solid #eee;
+    .wc-options-area {
+        width: 100%;
+        max-width: 100%;
+        height: 55%;
+        border-left: none;
+        border-top: 1px solid #eee;
     }
 
-    .wc-custom-header{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
+    .wc-custom-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 
-    .wc-right{
-        width:100%;
+    .wc-right {
+        width: 100%;
     }
 
     .wc-add-cart,
-    .wc-add-list{
-        width:100%;
+    .wc-add-list {
+        width: 100%;
     }
 
-    .popup-product-title{
-        font-size:16px;
+    .popup-product-title {
+        font-size: 16px;
     }
 }
 
 
 /* ===== SMALL PHONES ===== */
 
-@media (max-width:480px){
+@media (max-width:480px) {
 
-    .popup-product-title{
-        font-size:14px;
+    .popup-product-title {
+        font-size: 14px;
     }
 
     .wc-add-cart,
-    .wc-add-list{
-        padding:12px;
-        font-size:14px;
+    .wc-add-list {
+        padding: 12px;
+        font-size: 14px;
     }
 
 }
 
-html,body{
-    overflow-x:hidden;
+html,
+body {
+    overflow-x: hidden;
 }
+
+
 
 /* commnets added by narendra end */
